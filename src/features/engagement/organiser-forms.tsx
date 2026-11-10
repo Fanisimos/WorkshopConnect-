@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useActionState, useEffect, useRef } from "react";
 
 import { Alert } from "@/components/ui/alert";
@@ -75,7 +76,7 @@ export function FulfilForm({
   resources: { id: string; title: string }[];
 }) {
   const [state, action] = useActionState(fulfilRequest, initialFormState);
-  if (state.ok) return <Alert tone="success">{state.message}</Alert>;
+  const pathname = usePathname();
   const v = state.values ?? {};
   const e = state.fieldErrors ?? {};
   const id = (name: string) => `${name}-${requestId}`;
@@ -83,6 +84,7 @@ export function FulfilForm({
   return (
     <form action={action} className="space-y-3" noValidate>
       <input type="hidden" name="requestId" value={requestId} />
+      <input type="hidden" name="returnTo" value={pathname} />
       {state.message && <Alert tone="error">{state.message}</Alert>}
       {resources.length > 0 && (
         <Field id={id("resourceId")} label="Share an existing resource" optional errors={e.resourceId}>

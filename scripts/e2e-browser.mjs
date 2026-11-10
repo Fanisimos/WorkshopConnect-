@@ -45,7 +45,8 @@ async function loginAs(email, password, expectPath) {
   await page.getByLabel("Email").fill(email);
   await page.getByLabel("Password").fill(password);
   await page.getByRole("button", { name: "Log in" }).click();
-  await page.waitForURL((u) => u.pathname.startsWith(expectPath), { timeout: 20_000 });
+  // Wait until we have actually left /login, then check where we landed.
+  await page.waitForURL((u) => u.pathname !== "/login" && u.pathname.startsWith(expectPath), { timeout: 20_000 });
   return page;
 }
 
@@ -69,7 +70,7 @@ try {
   const end = new Date(start.getTime() + 60 * 60_000);
   const s = ukParts(start);
   const e = ukParts(end);
-  const title = `[E2E test] SQL JOINs ${s.date} ${s.time}`;
+  const title = `[E2E test] SQL JOINs ${s.date} ${s.time} #${Math.random().toString(36).slice(2, 6)}`;
   await org.getByLabel("Title", { exact: true }).fill(title);
   await org.getByLabel(/Description/).fill("Automated end-to-end test workshop.");
   await org.getByLabel("Date").fill(s.date);
@@ -172,14 +173,15 @@ try {
   ok(true, "fulfilling with nothing filled in is rejected");
   await groupBy2.getByLabel(/Note to the student/).fill("We'll cover GROUP BY with HAVING at the start of next week's session.");
   await groupBy2.getByRole("button", { name: "Mark as fulfilled" }).click();
-  await org.getByText("Request fulfilled.").waitFor();
+  await org.getByText("Request fulfilled. The student can now see your response").waitFor();
   ok(true, "organiser fulfils the GROUP BY request with a note");
   await shot(org, "organiser-follow-up");
 
   // ------------------------------------------------------------ student sees the loop closed
   await stu.goto(`${BASE}/requests`);
-  ok(await stu.getByRole("link", { name: /SQL JOINs practice set/ }).first().isVisible(), "student sees the shared resource on the fulfilled request");
-  ok(await stu.getByText("We'll cover GROUP BY with HAVING").isVisible(), "student sees the organiser's note");
+  const mine = stu.locator("li", { hasText: title }); // this run's requests only (earlier runs may leave others)
+  ok(await mine.getByRole("link", { name: /SQL JOINs practice set/ }).first().isVisible(), "student sees the shared resource on the fulfilled request");
+  ok(await mine.getByText("We'll cover GROUP BY with HAVING").isVisible(), "student sees the organiser's note");
   await shot(stu, "student-requests");
   await stu.goto(`${BASE}/dashboard`);
   ok(

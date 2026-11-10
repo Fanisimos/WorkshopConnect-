@@ -50,6 +50,7 @@ export default async function WorkshopFeedbackPage({ params }: PageProps<"/works
             <StepHeading step={1} title="Rate the workshop" done={Boolean(feedback)} />
             {feedback ? (
               <div className="space-y-3">
+                <p className="text-sm font-medium text-emerald-700">Thanks for your feedback!</p>
                 <ScorePill label="Your rating" value={feedback.rating} />
                 {feedback.comment && <p className="text-sm whitespace-pre-line text-ink-muted">“{feedback.comment}”</p>}
               </div>
@@ -62,6 +63,7 @@ export default async function WorkshopFeedbackPage({ params }: PageProps<"/works
             <StepHeading step={2} title="Learning Pulse" done={Boolean(pulse)} />
             {pulse ? (
               <div className="space-y-3">
+                <p className="text-sm font-medium text-emerald-700">Learning Pulse saved. Thank you!</p>
                 <div className="grid grid-cols-3 gap-2">
                   <ScorePill label="Before (looking back)" value={pulse.confidence_before} />
                   <ScorePill label="Now" value={pulse.confidence_after} />

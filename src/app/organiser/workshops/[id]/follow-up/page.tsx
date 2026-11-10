@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import { Alert } from "@/components/ui/alert";
 import { Card, EmptyState } from "@/components/ui/card";
 import { ConfirmSubmit } from "@/components/ui/confirm-submit";
 import { deleteResource } from "@/features/engagement/actions";
@@ -36,6 +37,11 @@ export default async function WorkshopFollowUpPage({ params, searchParams }: Pag
   return (
     <div className="space-y-6">
       <OrganiserWorkshopHeader workshop={workshop} openRequests={open.length} />
+      {query.fulfilled && (
+        <Alert tone="success">
+          Request fulfilled. The student can now see your response under My requests.
+        </Alert>
+      )}
 
       <div className="grid gap-6 lg:grid-cols-5">
         <section aria-labelledby="requests-heading" className="space-y-3 lg:col-span-3">

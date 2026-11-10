@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { assertRole } from "@/lib/auth";
 import { fieldErrorsFrom, formValues, type FormState } from "@/lib/forms";
 import { isUuid } from "@/lib/ids";
+import { safeNextPath } from "@/lib/paths";
 import { createClient } from "@/lib/supabase/server";
 import { topicKey } from "@/lib/topics";
 
@@ -208,5 +209,7 @@ export async function fulfilRequest(_prev: FormState, formData: FormData): Promi
   if (error || !data?.length) return { message: GENERIC, values };
 
   refresh(request.workshop_id);
-  return { ok: true, message: "Request fulfilled. The student can now see your response." };
+  // The fulfilled card leaves the open list, so confirm on the page the organiser came from.
+  const back = safeNextPath(formData.get("returnTo"));
+  redirect(`${back?.startsWith("/organiser") ? back : "/organiser/requests"}?fulfilled=1`);
 }

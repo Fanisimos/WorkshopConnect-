@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { Alert } from "@/components/ui/alert";
 import { EmptyState, PageHeader } from "@/components/ui/card";
 import { getOrganiserRequests, getResourcesForWorkshops, type RequestStatus } from "@/features/engagement/queries";
 import { OrganiserRequestCard } from "@/features/engagement/request-card";
@@ -43,6 +44,11 @@ export default async function OrganiserRequestsPage({ searchParams }: PageProps<
   return (
     <>
       <PageHeader title="Resource requests" description="What students have asked for across your workshops." />
+      {query.fulfilled && (
+        <Alert tone="success" className="mb-6">
+          Request fulfilled. The student can now see your response under My requests.
+        </Alert>
+      )}
 
       <nav aria-label="Filter requests" className="mb-5 flex gap-1 overflow-x-auto">
         {FILTERS.map((f) => (

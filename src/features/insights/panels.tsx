@@ -96,10 +96,10 @@ export function LearningNeedsPanel({
             <thead className="text-xs tracking-wide text-ink-muted uppercase">
               <tr>
                 <th scope="col" className="py-2 pr-3 font-medium">Topic</th>
-                <th scope="col" className="px-3 py-2 text-right font-medium">Pulse</th>
-                <th scope="col" className="px-3 py-2 text-right font-medium">Requests</th>
-                <th scope="col" className="px-3 py-2 text-right font-medium">Open</th>
-                {followUpHref && <th scope="col" className="py-2 pl-3"><span className="sr-only">Action</span></th>}
+                <th scope="col" className="px-2 py-2 text-right font-medium sm:px-3">Pulse</th>
+                <th scope="col" className="px-2 py-2 text-right font-medium sm:px-3">Requests</th>
+                <th scope="col" className="px-2 py-2 text-right font-medium sm:px-3">Open</th>
+                {followUpHref && <th scope="col" className="py-2 pl-2 sm:pl-3"><span className="sr-only">Action</span></th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-line">
@@ -108,15 +108,15 @@ export function LearningNeedsPanel({
                   <th scope="row" className="py-2.5 pr-3 font-medium text-ink">
                     {t.label}
                   </th>
-                  <td className="px-3 py-2.5 text-right text-ink-muted tabular-nums">{t.pulseMentions}</td>
-                  <td className="px-3 py-2.5 text-right text-ink-muted tabular-nums">{t.requests}</td>
-                  <td className="px-3 py-2.5 text-right tabular-nums">
+                  <td className="px-2 py-2.5 text-right text-ink-muted tabular-nums sm:px-3">{t.pulseMentions}</td>
+                  <td className="px-2 py-2.5 text-right text-ink-muted tabular-nums sm:px-3">{t.requests}</td>
+                  <td className="px-2 py-2.5 text-right tabular-nums sm:px-3">
                     <span className={t.openRequests ? "font-semibold text-amber-800" : "text-ink-muted"}>{t.openRequests}</span>
                   </td>
                   {followUpHref && (
-                    <td className="py-2.5 pl-3 text-right">
+                    <td className="py-2.5 pl-2 text-right sm:pl-3">
                       <Link href={followUpHref(t.label)} className="font-medium whitespace-nowrap text-brand-700 hover:underline">
-                        Share resource
+                        Share<span className="sr-only sm:not-sr-only"> resource</span>
                       </Link>
                     </td>
                   )}

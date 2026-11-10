@@ -81,6 +81,15 @@ select public.promote_to_organiser('person@example.ac.uk');
 
 This function cannot be called from the app or the public API. Only an admin with dashboard access can run it.
 
+To turn an organiser back into a student (same place):
+
+```sql
+update public.profiles set role = 'student'
+where id = (select id from auth.users where email = 'person@example.ac.uk');
+```
+
+Workshops they created stay in the database but nobody can manage them until the account is promoted again.
+
 ## Scripts
 
 | Command | What it does |
