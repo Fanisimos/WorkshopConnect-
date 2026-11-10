@@ -42,7 +42,12 @@ if (error) {
     console.error(`Could not sign in or register ${EMAIL}: ${res.error.code ?? res.error.message}`);
     process.exit(1);
   }
-  console.log(`Registered ${EMAIL} (password: ${PASSWORD}) — set SMOKE_PASSWORD to reuse it.`);
+  if (!res.data.session) {
+    console.error(`Registered ${EMAIL}, but Supabase returned no session: "Confirm email" is still ON.`);
+    console.error("Turn it off (Authentication → Sign In / Providers → Email) and confirm this user, then rerun.");
+    process.exit(1);
+  }
+  console.log(`Registered ${EMAIL} — set SMOKE_PASSWORD to reuse it.`);
   signIn = res.data;
 }
 const userId = signIn.user.id;

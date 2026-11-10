@@ -11,7 +11,8 @@
     "typecheck": "tsc --noEmit",
     "db:push": "bash scripts/with-db-password.sh push",
     "db:types": "bash scripts/with-db-password.sh types",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:live": "node --env-file=.env.local --env-file=.env.test.local scripts/smoke-live.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.7",
