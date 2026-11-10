@@ -15,5 +15,13 @@ export const env = {
     "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
   ),
-  siteUrl: (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/+$/, ""),
+  // Base URL encoded in QR codes. If NEXT_PUBLIC_SITE_URL isn't set, fall back to
+  // the host's own production URL (Netlify sets URL, Vercel sets
+  // VERCEL_PROJECT_PRODUCTION_URL) before localhost.
+  siteUrl: (
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.URL ||
+    (process.env.VERCEL_PROJECT_PRODUCTION_URL && `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`) ||
+    "http://localhost:3000"
+  ).replace(/\/+$/, ""),
 };
