@@ -14,3 +14,6 @@
 | 10 | 2026-11-10 | No component library; ~6 hand-written Tailwind primitives | Forms and cards only; native elements are accessible; fewer dependencies | Revisit if dialogs/menus are needed |
 | 11 | 2026-11-10 | DB permission tests in plain SQL against a throwaway local Postgres (`npm run test:db`) | No Docker on the dev machine; no secrets needed; fast and repeatable | Uses a small stand-in for Supabase `auth` (see progress.md, issue 3) |
 | 12 | 2026-11-10 | Email confirmation disabled in Supabase Auth | Built-in email is heavily rate-limited; would break demos | Email ownership is not verified (documented limitation) |
+| 13 | 2026-11-10 | Deploy on Netlify (developer's choice) instead of Vercel | Developer already uses Netlify; `@netlify/plugin-nextjs` supports App Router and proxy | QR codes depend on `NEXT_PUBLIC_SITE_URL` being the Netlify URL |
+| 14 | 2026-11-10 | Workshops are single-day: one date with start and end times; times entered in UK local time | Matches how skills workshops run; simpler form; DST handled by `lib/dates.ts` | Multi-day events not supported |
+| 15 | 2026-11-10 | Published workshops can't return to draft (complete/cancel instead) | Students may already have checked in; a draft is hidden from them | Organiser must cancel rather than unpublish |

@@ -18,13 +18,26 @@ Status key: ✅ done and verified · 🟡 built, not yet verified end to end · 
 | Role-guarded student and organiser layouts | 🟡 | needs a student and an organiser account to verify |
 | Unit tests (redirect guard, auth validation) | ✅ | `npm test` (20 tests) |
 
+## Day 2 — Workshops (2026-11-10)
+
+| Item | Status | Evidence |
+|---|---|---|
+| Organiser: create (draft or publish), edit, list own workshops | 🟡 | builds, typed, validated; needs browser run as organiser |
+| Organiser: status lifecycle (publish → complete/cancel → reopen), delete drafts only | 🟡 | transition rules unit-tested; DB rules in `test:db` |
+| Student: browse upcoming/past workshops, workshop details, "Hosted by" | 🟡 | builds; needs browser run |
+| Dashboards show real data (no mock data) | 🟡 | — |
+| UK time handling (GMT/BST) for workshop times | ✅ | `tests/unit/dates.test.ts` incl. both 2026 clock changes |
+| Friendly error and 404 pages | ✅ | build |
+| Live smoke test script (`scripts/smoke-live.mjs`) | 🟡 | blocked: needs a real email domain (Supabase rejects example.com) |
+
 ## Outstanding issues
 
 | # | Issue | Impact | Plan |
 |---|---|---|---|
 | 1 | University Wi-Fi blocks direct Postgres connections | `db:push`/`db:types` need another network | use hotspot; app itself works (HTTPS) |
 | 2 | Supabase CLI v2.84 hangs at "Initialising login role" without a password | none with `scripts/with-db-password.sh` | optionally upgrade CLI to v3 later |
-| 3 | DB tests use a stand-in for Supabase `auth` | small gap vs. real platform | spot-check key rules against live project on Day 6 |
+| 3 | DB tests use a stand-in for Supabase `auth` | small gap vs. real platform | `scripts/smoke-live.mjs` checks key rules on the live project |
+| 4 | Netlify build needs env vars set in Netlify UI | deploy fails until set | see README (to write) / chat instructions |
 
 ## Known limitations (running list)
 
