@@ -1,57 +1,49 @@
 # Progress checklist
 
-Status key: ✅ done and verified · 🟡 built, not yet verified end to end · ⬜ not started
+Status key: ✅ done and verified · 🟡 built, verification pending · ⬜ not started
+Evidence refers to [testing.md](testing.md).
 
-## Day 1 — Foundation (2026-11-10)
+## Core MVP
 
-| Item | Status | Evidence |
+| Requirement | Status | Evidence |
 |---|---|---|
-| Standalone git repo, remote `Fanisimos/WorkshopConnect-` | ✅ | `git remote -v` |
-| Next.js 16.4 + React 19 + TS strict + Tailwind 4 scaffold | ✅ | `npm run build` passes |
-| Database schema, constraints, indexes | ✅ | applied to Supabase via `npm run db:push` |
-| RLS policies + column grants | ✅ | `npm run test:db` (85 assertions, local Postgres) |
-| `check_in()` and `promote_to_organiser()` functions | ✅ | `npm run test:db` |
-| Anonymous access blocked on live project | ✅ | manual REST calls with publishable key → `42501` on all tables and RPCs |
-| TypeScript types generated from live schema | ✅ | `src/lib/database.types.ts` via `npm run db:types` |
-| Session refresh + logged-out redirect (proxy) | ✅ | curl: protected routes → 307 `/login?next=…` |
-| Register / login / logout pages + Server Actions | 🟡 | builds and renders; needs a browser run against Supabase |
-| Role-guarded student and organiser layouts | 🟡 | needs a student and an organiser account to verify |
-| Unit tests (redirect guard, auth validation) | ✅ | `npm test` (20 tests) |
+| **A. Auth:** register, login, logout, sessions, protected routes | ✅ | live smoke (real session cookies on Netlify); login form driven in Chrome; developer used it on a phone |
+| **A. Roles:** server-side role checks, RLS, no self-promotion, admin provisioning | ✅ | `test:db`, live smoke |
+| **B. Workshops:** create (draft/publish), edit, status lifecycle, delete drafts; student browse + details | 🟡 | developer created and published workshops on Netlify; full form flow is in `test:e2e` (pending organiser promotion) |
+| **C. QR attendance:** per-workshop QR (SVG + PNG), mobile check-in, auth first, duplicates rejected, organiser list | ✅ | `test:db`; developer's real-phone test on Netlify; live smoke for invalid codes |
+| **D. Feedback:** 1–5 + comment (attendees only); organiser average, distribution, comments | 🟡 | `test:db`, unit tests; UI flow in `test:e2e` (pending) |
+| **E. Resource requests:** create, track status, organiser manage (pending → in progress → fulfilled), links/notes | 🟡 | `test:db`, unit tests; UI flow in `test:e2e` (pending) |
 
-## Day 2 — Workshops (2026-11-10)
+## Differentiators
 
-| Item | Status | Evidence |
+| Feature | Status | Evidence |
 |---|---|---|
-| Organiser: create (draft or publish), edit, list own workshops | 🟡 | builds, typed, validated; needs browser run as organiser |
-| Organiser: status lifecycle (publish → complete/cancel → reopen), delete drafts only | 🟡 | transition rules unit-tested; DB rules in `test:db` |
-| Student: browse upcoming/past workshops, workshop details, "Hosted by" | 🟡 | builds; needs browser run |
-| Dashboards show real data (no mock data) | 🟡 | — |
-| UK time handling (GMT/BST) for workshop times | ✅ | `tests/unit/dates.test.ts` incl. both 2026 clock changes |
-| Friendly error and 404 pages | ✅ | build |
-| Live smoke test script (`scripts/smoke-live.mjs`) | 🟡 | blocked: needs a real email domain (Supabase rejects example.com) |
+| Learning Pulse (retrospective before, now, support topic), labelled as self-reported | 🟡 | `test:db`, unit tests; UI in `test:e2e` (pending) |
+| Organiser insights: response count, average before / now / change, learning needs by topic, outstanding requests | 🟡 | `tests/unit/insights.test.ts`; UI in `test:e2e` (pending) |
+| Close the loop: share a resource for a topic and fulfil matching open requests in one step | 🟡 | `test:e2e` (pending) |
+| Student: resources for topics they asked about; engagement history | 🟡 | `test:e2e` (pending) |
 
-## Day 3 — QR attendance (2026-11-10)
+## Deliverables
 
-| Item | Status | Evidence |
-|---|---|---|
-| QR code per workshop (on-screen SVG + PNG download), encodes `NEXT_PUBLIC_SITE_URL/check-in/<token>` | 🟡 | build; live check waits for organiser test account |
-| Mobile check-in page: login → back to check-in → result (checked in / already / closed / invalid / organiser) | 🟡 | "invalid code" path verified live; full path waits for organiser |
-| Duplicate check-ins rejected (DB UNIQUE + friendly "Already checked in") | ✅ | `test:db`; live re-check pending |
-| Organiser attendance list (name + check-in time) | 🟡 | waits for organiser test account |
-| Student: "You attended" on workshop page; attended list on dashboard | 🟡 | waits for organiser test account |
-| Live smoke test covers student rules + full QR flow (`npm run test:live -- <url>`) | 🟡 | student part ✅ (14 checks); organiser part skips until promoted |
+| Deliverable | Status |
+|---|---|
+| Source code on GitHub | ✅ |
+| SQL migrations, schema, ERD | ✅ [database.md](database.md) |
+| Architecture diagram | ✅ [architecture.md](architecture.md) |
+| Testing evidence | 🟡 [testing.md](testing.md) (e2e run pending) |
+| README with setup, `.env.example`, deployment | ✅ |
+| Known limitations | ✅ [limitations.md](limitations.md) |
+| Decision log | ✅ [decisions.md](decisions.md) |
+| Demo script | ✅ [demo-script.md](demo-script.md) |
+| AI-assistance record | ✅ [ai-log.md](ai-log.md) |
 
 ## Outstanding issues
 
 | # | Issue | Impact | Plan |
 |---|---|---|---|
-| 1 | University Wi-Fi blocks direct Postgres connections | `db:push`/`db:types` need another network | use hotspot; app itself works (HTTPS) |
-| 2 | Supabase CLI v2.84 hangs at "Initialising login role" without a password | none with `scripts/with-db-password.sh` | optionally upgrade CLI to v3 later |
-| 3 | DB tests use a stand-in for Supabase `auth` | small gap vs. real platform | `scripts/smoke-live.mjs` checks key rules on the live project |
-| 4 | Netlify build needs env vars set in Netlify UI | deploy fails until set | see README (to write) / chat instructions |
-
-## Known limitations (running list)
-
-- One role per account; a person who is both student and organiser needs two accounts.
-- Organisers are provisioned manually by an admin (`promote_to_organiser` in the SQL editor). Roadmap: university SSO with staff-group → role mapping, invite flow, admin screen.
-- Email ownership is not verified (confirmation disabled for demos).
+| 1 | Test organiser `xspot1995+wcorganiser@hotmail.com` not promoted | blocks `test:e2e` and organiser half of `test:live` | developer runs `promote_to_organiser` once |
+| 2 | University Wi-Fi blocks direct Postgres connections | `db:push`/`db:types` need another network | use hotspot; the app itself works (HTTPS) |
+| 3 | Supabase CLI v2.84 hangs without the DB password | none: `scripts/with-db-password.sh` prompts for it | optional CLI upgrade |
+| 4 | Project lives in iCloud-synced Desktop; iCloud created duplicate `* 2.ts` files in `.next/` | broke type-check once | move project out of Desktop (developer's decision) |
+| 5 | Netlify `NEXT_PUBLIC_SITE_URL` was localhost | QR pointed to localhost | developer to set it; app now falls back to Netlify's own URL |
+| 6 | Test runs leave "[E2E test]" / "[Smoke test]" workshops | demo clutter | `scripts/cleanup-test-data.sql` before demos |

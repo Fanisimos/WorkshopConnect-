@@ -364,6 +364,40 @@ select tests.throws($$insert into public.resource_requests (workshop_id, descrip
 reset role;
 
 -- =====================================================================
+-- Referential rules: same-workshop resources, protected records
+-- =====================================================================
+select tests.become('02000000-0000-0000-0000-000000000002');
+select tests.ok(tests.affected($$insert into public.resources (workshop_id, title, url)
+                                 values ('11111111-0000-0000-0000-000000000003', 'Writing guide', 'https://example.org/writing')$$) = 1,
+  'organiser O2 shares a resource on their own workshop');
+reset role;
+
+-- O2's resource id, captured as admin for the next check
+create temp table t_o2_resource as select id from public.resources where title = 'Writing guide';
+grant select on t_o2_resource to authenticated;
+
+select tests.become('01000000-0000-0000-0000-000000000001');
+select tests.ok(tests.count_rows($$select * from public.profiles where role = 'organiser'$$) = 2,
+  'organisers can read other organisers'' names');
+select tests.throws(format($$update public.resource_requests set resource_id = %L$$, (select id from t_o2_resource)),
+  '23503', 'a request cannot be fulfilled with a resource from another workshop');
+select tests.throws($$delete from public.resources where title = 'SQL JOINs explained'$$,
+  '23503', 'a resource used to fulfil a request cannot be deleted');
+select tests.ok(tests.affected($$update public.resources set title = 'SQL JOINs explained (v2)' where title = 'SQL JOINs explained'$$) = 1,
+  'organiser can edit their own resource');
+select tests.ok(tests.affected($$update public.resources set title = 'Hijacked' where title = 'Writing guide'$$) = 0,
+  'organiser cannot edit another organiser''s resource');
+reset role;
+
+-- even if a workshop with attendance is moved back to draft, it can't be deleted
+update public.workshops set status = 'draft' where id = '11111111-0000-0000-0000-000000000001';
+select tests.become('01000000-0000-0000-0000-000000000001');
+select tests.throws($$delete from public.workshops where id = '11111111-0000-0000-0000-000000000001'$$,
+  '23503', 'a workshop with attendance cannot be deleted (records are kept)');
+reset role;
+update public.workshops set status = 'published' where id = '11111111-0000-0000-0000-000000000001';
+
+-- =====================================================================
 -- Student A sees the loop closed
 -- =====================================================================
 select tests.become('a0000000-0000-0000-0000-00000000000a');

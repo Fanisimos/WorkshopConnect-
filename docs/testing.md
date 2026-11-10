@@ -1,0 +1,65 @@
+# Testing
+
+Four layers, from fastest to most realistic. Results below are only those that actually ran; each entry gives the date and command.
+
+| Layer | Command | What it covers | Needs |
+|---|---|---|---|
+| Unit | `npm test` | Validation schemas, redirect guard, UK time conversion, check-in result parsing, status transitions, insight calculations | nothing |
+| Database permissions | `npm run test:db` | Every migration applied to a throwaway Postgres; RLS, grants, constraints, `check_in()`, provisioning, as real `anon` / student / organiser roles | local Postgres 15+ |
+| Live smoke | `npm run test:live -- <url>` | Real Supabase project + running app: role rules via the public API, page access and redirects, full QR check-in flow | `.env.test.local` |
+| Browser end-to-end | `npm run test:e2e -- <url>` | Both journeys through the real UI in Chrome: login forms, create/publish workshop, QR, check-in, feedback, Learning Pulse, requests, insights, share-for-topic, fulfil, drafts | Chrome, promoted test organiser |
+
+## Results log
+
+| Date | Command | Target | Result |
+|---|---|---|---|
+| 2026-11-10 | `npm test` | — | 77 tests passed |
+| 2026-11-10 | `npm run test:db` | local Postgres 16 | 91 checks passed |
+| 2026-11-10 | `npm run test:live` | https://workshopconnectbravo11.netlify.app | student section (14 checks) passed; organiser section skipped (test organiser not yet promoted) |
+| 2026-11-10 | manual, real phone | Netlify | developer scanned a workshop QR with a phone: check-in recorded; "check-in isn't open" shown for a future workshop; dashboard showed the attended workshop |
+| 2026-11-10 | `npm run test:e2e` | localhost | **not yet run**: test organiser not yet promoted |
+
+Corrections made while writing tests (code unchanged unless stated):
+- Two expectations in the first database-test draft were wrong: a rating-range test used a non-attendee, so RLS rejected it before the CHECK constraint; and a student updating a request status is filtered to 0 rows by RLS rather than raising an error. The tests were corrected; the schema was not changed.
+
+## Database permission checks (`tests/db/rls.test.sql`)
+
+Highlights of the 91 checks:
+
+- **Roles:** sign-up always creates a student even if metadata says organiser; students can't change their role, insert profiles, or call `promote_to_organiser`; anonymous users can't read any table or call `check_in`.
+- **Workshops:** students see published workshops only, can't create/edit/delete; organisers can't create on behalf of another organiser or edit another organiser's workshop; published workshops and workshops with attendance can't be deleted.
+- **QR & attendance:** students can't read tokens or insert attendance directly; `check_in()` records the authenticated student, returns `already_checked_in` on repeat, `invalid` for unknown tokens, `closed` outside the window or for drafts, `not_student` for organisers; the UNIQUE constraint rejects duplicates even bypassing the function.
+- **Feedback & Learning Pulse:** attendees only; `student_id` comes from the session and can't be supplied; one per student per workshop; no edits; 1–5 ranges; `confidence_change = after - before`.
+- **Requests & resources:** students' requests always start `pending`; students can't set or change status or edit text; organisers can't rewrite the student's text; fulfilled requires a resource or note; resources must be https and belong to the same workshop; a resource used to fulfil a request can't be deleted.
+- **Privacy:** students can't see each other's attendance, feedback, pulse, requests or profiles; organisers see only students linked to their own workshops; a second organiser sees none of the first organiser's student data.
+
+## Manual acceptance tests
+
+Run on a phone (student) and a laptop (organiser). Tick when verified on the deployed site.
+
+### Student journey
+- [ ] Register → lands on dashboard
+- [ ] Log out, log in again
+- [ ] Browse workshops → open one
+- [ ] Scan the QR code → "You're checked in" (verified manually on 2026-11-10)
+- [ ] Scan again → "Already checked in"
+- [ ] Give feedback (try submitting without a rating first → error shown)
+- [ ] Complete the Learning Pulse
+- [ ] Request resources → appears as Pending in My requests
+- [ ] After the organiser responds → Fulfilled with link/note
+
+### Organiser journey
+- [ ] Log in → organiser dashboard
+- [ ] Create a workshop (try an end time before the start → error shown) → Publish
+- [ ] Show QR code → download PNG
+- [ ] Attendance list shows the student
+- [ ] Feedback & insights shows rating, Learning Pulse and learning needs
+- [ ] Share resource for a topic → matching request fulfilled
+- [ ] Respond to another request with a note
+- [ ] Complete / cancel / reopen a workshop; delete a draft
+
+### Security checks
+- [ ] As a student, open `/organiser` → redirected to the student dashboard
+- [ ] As a student, open `/organiser/workshops/<id>/qr/download` → not allowed
+- [ ] Logged out, open `/dashboard` → redirected to login
+- [ ] Mobile layout: every page usable at 390px width (checked by screenshots on 2026-11-10 for student pages)
