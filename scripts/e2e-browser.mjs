@@ -70,7 +70,7 @@ try {
   const s = ukParts(start);
   const e = ukParts(end);
   const title = `[E2E test] SQL JOINs ${s.date} ${s.time}`;
-  await org.getByLabel("Title").fill(title);
+  await org.getByLabel("Title", { exact: true }).fill(title);
   await org.getByLabel(/Description/).fill("Automated end-to-end test workshop.");
   await org.getByLabel("Date").fill(s.date);
   await org.getByLabel("Start time").fill(s.time);
@@ -149,10 +149,12 @@ try {
 
   await needsRow.getByRole("link", { name: "Share resource" }).click();
   await org.waitForURL(/follow-up\?topic=SQL/);
-  ok((await org.getByLabel("Topic", { exact: false }).first().inputValue()) === "SQL JOINs", "Share resource pre-fills the topic");
-  await org.getByLabel("Title").fill("SQL JOINs practice set");
-  await org.getByLabel("Link").first().fill("https://www.w3schools.com/sql/sql_join.asp");
-  await org.getByRole("button", { name: "Share resource" }).click();
+  const share = org.locator("#share");
+  ok((await share.getByLabel(/^Topic/).inputValue()) === "SQL JOINs", "Share resource pre-fills the topic");
+  ok(await share.getByRole("checkbox").isChecked(), "'also fulfil the 1 open request' is offered and ticked");
+  await share.getByLabel("Title", { exact: true }).fill("SQL JOINs practice set");
+  await share.getByLabel("Link", { exact: true }).fill("https://www.w3schools.com/sql/sql_join.asp");
+  await share.getByRole("button", { name: "Share resource" }).click();
   await org.getByText(/1 matching request was marked as fulfilled/).waitFor();
   ok(true, "sharing a resource for the topic fulfils the matching open request");
 
@@ -176,10 +178,8 @@ try {
 
   // ------------------------------------------------------------ student sees the loop closed
   await stu.goto(`${BASE}/requests`);
-  const mine = stu.locator("li", { hasText: title }).filter({ hasText: "SQL JOINs" }).first();
   ok(await stu.getByRole("link", { name: /SQL JOINs practice set/ }).first().isVisible(), "student sees the shared resource on the fulfilled request");
   ok(await stu.getByText("We'll cover GROUP BY with HAVING").isVisible(), "student sees the organiser's note");
-  void mine;
   await shot(stu, "student-requests");
   await stu.goto(`${BASE}/dashboard`);
   ok(
@@ -194,7 +194,7 @@ try {
   await shot(org, "organiser-dashboard");
 
   await org.goto(`${BASE}/organiser/workshops/new`);
-  await org.getByLabel("Title").fill("[E2E test] Draft to delete");
+  await org.getByLabel("Title", { exact: true }).fill("[E2E test] Draft to delete");
   await org.getByLabel("Date").fill(s.date);
   await org.getByLabel("Start time").fill("09:00");
   await org.getByLabel("End time").fill("10:00");

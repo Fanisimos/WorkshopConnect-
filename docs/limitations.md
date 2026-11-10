@@ -36,6 +36,7 @@ Honest limits of the MVP, and what a production version would need.
 - No export (CSV) of attendance or feedback.
 - Topic grouping is by exact text after lower-casing and trimming. "JOINs" and "SQL JOINs" count as different topics; organiser-defined focus topics reduce this.
 - Light theme only.
+- No rate limiting: a student can submit many resource requests. Supabase Auth rate-limits sign-ups and logins; app-level limits would be added for production.
 
 ## Engineering
 
