@@ -12,6 +12,7 @@ Tool: Claude Code (Claude Opus 5.5), used as a pair programmer. The developer re
 | 2026-11-10 | QR attendance (Day 3) | QR display/download, check-in page, attendance views, live smoke test | Deployed to Netlify; tested check-in with a real phone |
 | 2026-11-10 | Engagement + Learning Pulse (Days 4–5) | Feedback, Pulse, requests, resources, insights, follow-up loop, dashboards, browser e2e script | Away; to review on return |
 | 2026-11-10 | Documentation | README, architecture, database/ERD, testing, limitations, demo script, cleanup SQL | To review for accuracy before submission |
+| 2026-11-10 | End-to-end testing | Ran the browser e2e suite; fixed a script bug (login wait), two missing confirmations (feedback/Pulse saved, request fulfilled) and a mobile table overflow; documented organiser demotion | Promoted the test organiser account in the SQL editor |
 
 ## Key prompts
 - Initial brief: full project specification (scope, stack, security rules, timeline): "Start with the architecture proposal."
