@@ -12,7 +12,8 @@
     "db:push": "bash scripts/with-db-password.sh push",
     "db:types": "bash scripts/with-db-password.sh types",
     "test": "vitest run",
-    "test:live": "node --env-file=.env.local --env-file=.env.test.local scripts/smoke-live.mjs"
+    "test:live": "node --env-file=.env.local --env-file=.env.test.local scripts/smoke-live.mjs",
+    "test:e2e": "node --env-file=.env.local --env-file=.env.test.local scripts/e2e-browser.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.7",
@@ -32,6 +33,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.4.6",
+    "playwright-core": "1.64.1",
     "tailwindcss": "4.3.3",
     "typescript": "^5",
     "vitest": "5.0.5"

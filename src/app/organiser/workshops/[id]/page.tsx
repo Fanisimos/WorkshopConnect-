@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { Alert } from "@/components/ui/alert";
@@ -8,8 +7,10 @@ import { Card } from "@/components/ui/card";
 import { ConfirmSubmit } from "@/components/ui/confirm-submit";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { getWorkshopAttendance } from "@/features/attendance/queries";
+import { countOpenRequests } from "@/features/engagement/queries";
 import { deleteDraftWorkshop, setWorkshopStatus } from "@/features/workshops/actions";
-import { StatusBadge, TopicChips, WorkshopMeta } from "@/features/workshops/components";
+import { StatusBadge, TopicChips } from "@/features/workshops/components";
+import { OrganiserWorkshopHeader } from "@/features/workshops/workshop-header";
 import { getOrganiserWorkshop } from "@/features/workshops/queries";
 import { allowedTransitions, type WorkshopStatus } from "@/features/workshops/schema";
 import { requireRole } from "@/lib/auth";
@@ -39,15 +40,25 @@ export default async function OrganiserWorkshopPage({ params, searchParams }: Pa
   if (!workshop) notFound();
 
   const transitions = allowedTransitions(workshop.status);
-  const attendance = await getWorkshopAttendance(workshop.id);
+  const [attendance, openRequests] = await Promise.all([
+    getWorkshopAttendance(workshop.id),
+    countOpenRequests(workshop.id),
+  ]);
 
   return (
     <div className="space-y-6">
-      <nav aria-label="Breadcrumb" className="text-sm">
-        <Link href="/organiser/workshops" className="text-ink-muted hover:text-ink">
-          ← All workshops
-        </Link>
-      </nav>
+      <OrganiserWorkshopHeader
+        workshop={workshop}
+        openRequests={openRequests}
+        actions={
+          <>
+            <ButtonLink href={`/organiser/workshops/${workshop.id}/qr`}>Show check-in QR</ButtonLink>
+            <ButtonLink href={`/organiser/workshops/${workshop.id}/edit`} variant="secondary">
+              Edit details
+            </ButtonLink>
+          </>
+        }
+      />
 
       {query.created && (
         <Alert tone="success">
@@ -55,22 +66,6 @@ export default async function OrganiserWorkshopPage({ params, searchParams }: Pa
         </Alert>
       )}
       {query.saved && <Alert tone="success">Changes saved.</Alert>}
-
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="space-y-3">
-          <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-2xl font-semibold tracking-tight text-ink">{workshop.title}</h1>
-            <StatusBadge status={workshop.status} />
-          </div>
-          <WorkshopMeta startsAt={workshop.starts_at} endsAt={workshop.ends_at} location={workshop.location} />
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <ButtonLink href={`/organiser/workshops/${workshop.id}/qr`}>Show check-in QR</ButtonLink>
-          <ButtonLink href={`/organiser/workshops/${workshop.id}/edit`} variant="secondary">
-            Edit details
-          </ButtonLink>
-        </div>
-      </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
