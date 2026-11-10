@@ -30,6 +30,17 @@ Status key: ✅ done and verified · 🟡 built, not yet verified end to end · 
 | Friendly error and 404 pages | ✅ | build |
 | Live smoke test script (`scripts/smoke-live.mjs`) | 🟡 | blocked: needs a real email domain (Supabase rejects example.com) |
 
+## Day 3 — QR attendance (2026-11-10)
+
+| Item | Status | Evidence |
+|---|---|---|
+| QR code per workshop (on-screen SVG + PNG download), encodes `NEXT_PUBLIC_SITE_URL/check-in/<token>` | 🟡 | build; live check waits for organiser test account |
+| Mobile check-in page: login → back to check-in → result (checked in / already / closed / invalid / organiser) | 🟡 | "invalid code" path verified live; full path waits for organiser |
+| Duplicate check-ins rejected (DB UNIQUE + friendly "Already checked in") | ✅ | `test:db`; live re-check pending |
+| Organiser attendance list (name + check-in time) | 🟡 | waits for organiser test account |
+| Student: "You attended" on workshop page; attended list on dashboard | 🟡 | waits for organiser test account |
+| Live smoke test covers student rules + full QR flow (`npm run test:live -- <url>`) | 🟡 | student part ✅ (14 checks); organiser part skips until promoted |
+
 ## Outstanding issues
 
 | # | Issue | Impact | Plan |

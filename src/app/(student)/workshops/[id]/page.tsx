@@ -4,10 +4,12 @@ import { notFound } from "next/navigation";
 
 import { Alert } from "@/components/ui/alert";
 import { Card } from "@/components/ui/card";
+import { getMyCheckIn } from "@/features/attendance/queries";
 import { PhaseBadge, TopicChips, WorkshopMeta } from "@/features/workshops/components";
 import { workshopPhase } from "@/features/workshops/phase";
 import { getVisibleWorkshop } from "@/features/workshops/queries";
 import { requireRole } from "@/lib/auth";
+import { formatDateTime } from "@/lib/dates";
 
 export const metadata: Metadata = { title: "Workshop" };
 
@@ -18,6 +20,7 @@ export default async function StudentWorkshopPage({ params }: PageProps<"/worksh
   if (!workshop) notFound();
 
   const phase = workshopPhase(workshop);
+  const checkedInAt = await getMyCheckIn(workshop.id);
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
@@ -41,7 +44,12 @@ export default async function StudentWorkshopPage({ params }: PageProps<"/worksh
       </div>
 
       {phase === "cancelled" && <Alert tone="warning">This workshop has been cancelled.</Alert>}
-      {(phase === "upcoming" || phase === "live") && (
+      {checkedInAt && (
+        <Alert tone="success" title="You attended this workshop">
+          Checked in on {formatDateTime(checkedInAt)}.
+        </Alert>
+      )}
+      {!checkedInAt && (phase === "upcoming" || phase === "live") && (
         <Alert tone="info" title="How to check in">
           At the workshop, scan the QR code shown by the organiser with your phone camera. You&apos;ll be asked to log in
           if you aren&apos;t already.

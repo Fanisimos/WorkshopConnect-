@@ -7,11 +7,13 @@ import { ButtonLink } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ConfirmSubmit } from "@/components/ui/confirm-submit";
 import { SubmitButton } from "@/components/ui/submit-button";
+import { getWorkshopAttendance } from "@/features/attendance/queries";
 import { deleteDraftWorkshop, setWorkshopStatus } from "@/features/workshops/actions";
 import { StatusBadge, TopicChips, WorkshopMeta } from "@/features/workshops/components";
 import { getOrganiserWorkshop } from "@/features/workshops/queries";
 import { allowedTransitions, type WorkshopStatus } from "@/features/workshops/schema";
 import { requireRole } from "@/lib/auth";
+import { formatDateTime } from "@/lib/dates";
 
 export const metadata: Metadata = { title: "Workshop" };
 
@@ -37,6 +39,7 @@ export default async function OrganiserWorkshopPage({ params, searchParams }: Pa
   if (!workshop) notFound();
 
   const transitions = allowedTransitions(workshop.status);
+  const attendance = await getWorkshopAttendance(workshop.id);
 
   return (
     <div className="space-y-6">
@@ -61,9 +64,12 @@ export default async function OrganiserWorkshopPage({ params, searchParams }: Pa
           </div>
           <WorkshopMeta startsAt={workshop.starts_at} endsAt={workshop.ends_at} location={workshop.location} />
         </div>
-        <ButtonLink href={`/organiser/workshops/${workshop.id}/edit`} variant="secondary">
-          Edit details
-        </ButtonLink>
+        <div className="flex flex-wrap gap-2">
+          <ButtonLink href={`/organiser/workshops/${workshop.id}/qr`}>Show check-in QR</ButtonLink>
+          <ButtonLink href={`/organiser/workshops/${workshop.id}/edit`} variant="secondary">
+            Edit details
+          </ButtonLink>
+        </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
@@ -80,17 +86,45 @@ export default async function OrganiserWorkshopPage({ params, searchParams }: Pa
               </div>
             )}
           </Card>
+
+          <Card>
+            <div className="flex items-center justify-between border-b border-line px-5 py-4">
+              <h2 className="text-sm font-semibold text-ink">Attendance</h2>
+              <span className="text-sm text-ink-muted">{attendance.length} checked in</span>
+            </div>
+            {attendance.length === 0 ? (
+              <p className="px-5 py-8 text-center text-sm text-ink-muted">
+                No one has checked in yet. Show the QR code at the start of the workshop.
+              </p>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm">
+                  <caption className="sr-only">Students who checked in</caption>
+                  <thead className="text-xs tracking-wide text-ink-muted uppercase">
+                    <tr>
+                      <th scope="col" className="px-5 py-2 font-medium">#</th>
+                      <th scope="col" className="px-5 py-2 font-medium">Student</th>
+                      <th scope="col" className="px-5 py-2 font-medium">Checked in</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-line">
+                    {attendance.map((row, i) => (
+                      <tr key={row.id}>
+                        <td className="px-5 py-2.5 text-ink-muted tabular-nums">{i + 1}</td>
+                        <td className="px-5 py-2.5 font-medium text-ink">{row.student?.full_name ?? "Unknown student"}</td>
+                        <td className="px-5 py-2.5 text-ink-muted tabular-nums">
+                          <time dateTime={row.checked_in_at}>{formatDateTime(row.checked_in_at)}</time>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </Card>
         </div>
 
         <div className="space-y-6">
-          <Card className="p-5">
-            <h2 className="text-sm font-semibold text-ink">Attendance</h2>
-            <p className="mt-2 text-3xl font-semibold text-ink">{workshop.attendanceCount}</p>
-            <p className="text-sm text-ink-muted">
-              {workshop.attendanceCount === 1 ? "student checked in" : "students checked in"}
-            </p>
-          </Card>
-
           <Card className="p-5">
             <h2 className="text-sm font-semibold text-ink">Status</h2>
             <div className="mt-2">
