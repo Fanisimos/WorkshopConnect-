@@ -65,6 +65,10 @@ export function RegisterForm({ next }: { next?: string }) {
           Log in
         </Link>
       </p>
+
+      <p className="border-t border-line pt-4 text-center text-xs text-ink-muted">
+        University staff: register here, then ask your administrator to enable organiser access.
+      </p>
     </form>
   );
 }

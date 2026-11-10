@@ -25,3 +25,9 @@ Status key: ✅ done and verified · 🟡 built, not yet verified end to end · 
 | 1 | University Wi-Fi blocks direct Postgres connections | `db:push`/`db:types` need another network | use hotspot; app itself works (HTTPS) |
 | 2 | Supabase CLI v2.84 hangs at "Initialising login role" without a password | none with `scripts/with-db-password.sh` | optionally upgrade CLI to v3 later |
 | 3 | DB tests use a stand-in for Supabase `auth` | small gap vs. real platform | spot-check key rules against live project on Day 6 |
+
+## Known limitations (running list)
+
+- One role per account; a person who is both student and organiser needs two accounts.
+- Organisers are provisioned manually by an admin (`promote_to_organiser` in the SQL editor). Roadmap: university SSO with staff-group → role mapping, invite flow, admin screen.
+- Email ownership is not verified (confirmation disabled for demos).
