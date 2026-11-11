@@ -44,7 +44,9 @@ Highlights of the 91 checks:
 
 ## Manual acceptance tests
 
-Run on a phone (student) and a laptop (organiser). Tick when verified on the deployed site.
+Run on a phone (student) and a laptop (organiser). Tick when verified by hand on the deployed site.
+
+Most steps are also covered automatically by `test:e2e` and `test:live` (both passed on Netlify on 2026-11-10). This list is for a human walk-through on a real phone, which the automated tests can't replace (camera scanning, real screen sizes, how it feels to use).
 
 ### Student journey
 - [ ] Register → lands on dashboard

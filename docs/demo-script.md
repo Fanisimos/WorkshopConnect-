@@ -6,6 +6,7 @@ A fictional example: **Priya**, a second-year student, attends an **"SQL for Beg
 
 - [ ] Open the Supabase dashboard so the free-tier project is awake.
 - [ ] Run `scripts/cleanup-test-data.sql` in the SQL editor to remove automated-test workshops.
+- [ ] Mark any old practice workshops **Completed** (or Cancelled) so students only see the demo workshop as current.
 - [ ] Accounts ready: one **organiser** (promoted) and one **student**, logged in on two devices or two browser profiles (laptop = organiser, phone = student).
 - [ ] As the organiser, create **"SQL for Beginners"** starting a few minutes before the demo, focus topics `SQL JOINs, GROUP BY, Subqueries`, and **Publish**.
 - [ ] Optional, for richer insights: have 2–3 classmates check in and complete feedback beforehand. Do **not** present invented numbers as real usage.
@@ -32,7 +33,7 @@ A fictional example: **Priya**, a second-year student, attends an **"SQL for Beg
 - **Request resources**: topic SQL JOINs, "Practice exercises on LEFT vs INNER JOIN, please." → My requests shows **Pending**.
 
 **5. Organiser sees the learning need (45 s)**: laptop
-- Open **Feedback & insights**: rating, confidence before vs now, and **Learning needs**: *SQL JOINs · 1 Pulse · 1 open request*.
+- Open **Feedback & insights**: rating, confidence before vs now, and the **Learning needs** table: *SQL JOINs*, Pulse 1, Requests 1, Open 1.
 - "With a real cohort, this is where you'd see ten students asking for the same thing."
 
 **6. Close the loop (45 s)**: laptop
@@ -43,7 +44,7 @@ A fictional example: **Priya**, a second-year student, attends an **"SQL for Beg
 - **My requests** → **Fulfilled**, with the link. Dashboard → **Resources for topics you asked about**.
 
 **8. Close (20 s)**
-> "Security is enforced in the database with Row Level Security: students can't see each other's data, can't make themselves organisers, and organisers only see their own workshops. We test that with 91 automated database checks."
+> "Security is enforced in the database with Row Level Security: students can't see each other's data, can't make themselves organisers, and organisers only see their own workshops. We test that with 91 automated database checks, and both journeys run end to end in a real browser against the live site."
 
 ## If something goes wrong
 

@@ -129,7 +129,7 @@ erDiagram
 
 | Table | Student | Organiser (own workshops only) | Anonymous |
 |---|---|---|---|
-| profiles | read own; update own `full_name` only | also read names of students linked to their workshops; read other organisers' names | — |
+| profiles | read own; read organisers' names (shown on workshop pages); update own `full_name` only | also read names of students linked to their workshops | — |
 | workshops | read non-draft | create, edit, delete drafts; read own drafts | — |
 | workshop_qr_tokens | — | read | — |
 | attendance | read own; create only via `check_in()` | read | — |
