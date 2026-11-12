@@ -40,12 +40,14 @@ Corrections made while writing tests (code unchanged unless stated):
 | QR check-in on students' own phones | 4 students checked in, with no help needed |
 | Feedback rating | 2 of 4 gave a rating |
 | Feedback comment | 1 comment, off-topic (a joke asking for lunch suggestions) |
-| Learning Pulse / resource requests | not reported |
+| Learning Pulse | 2 of 4 completed it: 1 felt about the same, 1 felt more confident (rated 4/5 "now") |
+| Resource requests | not reported |
 
 Observations:
 - Check-in worked first time on real devices, which was the riskiest step of the loop.
 - Half of those who checked in left feedback. Nothing in the app reminds students to give feedback after they leave the session (no notifications by design; see [limitations](limitations.md)), so asking the group in the room matters.
 - Free-text comments can be off-topic. Organisers see them without names and cannot hide them. Hiding or flagging comments is a possible improvement; it is not built.
+- The Learning Pulse insight panel showed the split as intended (1 more confident, 1 about the same). These are self-reported feelings, not evidence of learning.
 - Four people is far too few to draw conclusions about ratings or confidence change.
 
 ## Database permission checks (`tests/db/rls.test.sql`)
