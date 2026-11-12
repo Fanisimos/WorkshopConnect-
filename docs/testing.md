@@ -31,6 +31,23 @@ Issues found by the first end-to-end runs (2026-11-10):
 Corrections made while writing tests (code unchanged unless stated):
 - Two expectations in the first database-test draft were wrong: a rating-range test used a non-attendee, so RLS rejected it before the CHECK constraint; and a student updating a request status is filtered to 0 rows by RLS rather than raising an error. The tests were corrected; the schema was not changed.
 
+## Real-user trial
+
+**2026-11-12, small group of fellow students, deployed site.** Numbers as reported by the developer, who ran the session as organiser.
+
+| Step | Result |
+|---|---|
+| QR check-in on students' own phones | 4 students checked in, with no help needed |
+| Feedback rating | 2 of 4 gave a rating |
+| Feedback comment | 1 comment, off-topic (a joke asking for lunch suggestions) |
+| Learning Pulse / resource requests | not reported |
+
+Observations:
+- Check-in worked first time on real devices, which was the riskiest step of the loop.
+- Half of those who checked in left feedback. Nothing in the app reminds students to give feedback after they leave the session (no notifications by design; see [limitations](limitations.md)), so asking the group in the room matters.
+- Free-text comments can be off-topic. Organisers see them without names and cannot hide them. Hiding or flagging comments is a possible improvement; it is not built.
+- Four people is far too few to draw conclusions about ratings or confidence change.
+
 ## Database permission checks (`tests/db/rls.test.sql`)
 
 Highlights of the 91 checks:
