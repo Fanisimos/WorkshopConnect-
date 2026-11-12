@@ -47,7 +47,7 @@ Observations:
 - Check-in worked first time on real devices, which was the riskiest step of the loop.
 - Half of those who checked in left feedback. Nothing in the app reminds students to give feedback after they leave the session (no notifications by design; see [limitations](limitations.md)), so asking the group in the room matters.
 - Free-text comments can be off-topic. Organisers see them without names and cannot hide them. Hiding or flagging comments is a possible improvement; it is not built.
-- The Learning Pulse insight panel showed the split as intended (1 more confident, 1 about the same). These are self-reported feelings, not evidence of learning.
+- Learning Pulse: 2 of 4 completed it, the same rate as feedback. The confidence results are self-reported feelings, not evidence of learning.
 - Four people is far too few to draw conclusions about ratings or confidence change.
 
 ## Database permission checks (`tests/db/rls.test.sql`)
